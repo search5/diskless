@@ -1,0 +1,10 @@
+[Unit]
+Description=Diskless bootd — TFTP 소켓 (모든 사이트 공통, 특권 포트 69)
+
+[Socket]
+ListenDatagram=69
+Accept=no
+FileDescriptorName=tftp
+
+[Install]
+WantedBy=sockets.target

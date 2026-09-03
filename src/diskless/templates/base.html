@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Diskless 관리{% endblock %}</title>
+</head>
+<body>
+  <nav>
+    <a href="/">대시보드</a>
+    <a href="/images">이미지 프로파일</a>
+    <a href="/clients">클라이언트 배정</a>
+    <a href="/settings">DHCP 모드 설정</a>
+  </nav>
+  {% block content %}{% endblock %}
+</body>
+</html>

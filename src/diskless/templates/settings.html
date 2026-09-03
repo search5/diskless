@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>DHCP 모드 설정</h1>
+<p>현재 실행 중인 프로세스: <strong>{{ current_dhcp_mode }}</strong></p>
+{% if stored_dhcp_mode and stored_dhcp_mode != current_dhcp_mode %}
+<p>저장된 설정(<strong>{{ stored_dhcp_mode }}</strong>)이 아직 적용되지 않았습니다 — bootd를 재시작해야 반영됩니다.</p>
+{% endif %}
+<form method="post" action="/settings">
+  <input type="hidden" name="_csrf" value="{{ xsrf_token }}">
+  <select name="dhcp_mode">
+    {% for mode in valid_modes %}
+      <option value="{{ mode }}" {% if mode == (stored_dhcp_mode or current_dhcp_mode) %}selected{% endif %}>{{ mode }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">저장 (다음 재시작부터 적용)</button>
+</form>
+{% endblock %}

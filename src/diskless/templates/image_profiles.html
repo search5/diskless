@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>이미지 프로파일</h1>
+<ul>
+{% for p in profiles %}
+  <li>
+    <a href="/images/{{ p.id }}/versions">{{ p.name }}</a> ({{ p.storage_dir }})
+    <form method="post" action="/images/{{ p.id }}/delete" style="display:inline">
+      <input type="hidden" name="_csrf" value="{{ xsrf_token }}">
+      <button type="submit">삭제</button>
+    </form>
+  </li>
+{% endfor %}
+</ul>
+<form method="post">
+  <input type="hidden" name="_csrf" value="{{ xsrf_token }}">
+  <input type="text" name="name" placeholder="프로파일 이름">
+  <input type="text" name="storage_dir" placeholder="storage_dir">
+  <button type="submit">추가</button>
+</form>
+{% endblock %}

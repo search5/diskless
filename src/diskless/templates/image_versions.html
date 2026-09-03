@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>버전 이력</h1>
+<table>
+<thead><tr><th>버전</th><th>생성 시각</th><th>생성자</th><th>체크섬</th><th></th></tr></thead>
+<tbody>
+{% for v in versions %}
+  <tr>
+    <td>{{ v.version_number }}</td><td>{{ v.created_at }}</td><td>{{ v.created_by }}</td><td>{{ v.checksum }}</td>
+    <td>
+      <form method="post" action="/images/{{ profile_id }}/versions/{{ v.version_number }}/delete">
+        <input type="hidden" name="_csrf" value="{{ xsrf_token }}">
+        <button type="submit">삭제</button>
+      </form>
+    </td>
+  </tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% if editing %}
+<form method="post" action="/images/{{ profile_id }}/finish-session">
+  <input type="hidden" name="_csrf" value="{{ xsrf_token }}">
+  <input type="hidden" name="action" value="merge">
+  <button type="submit">완료 — 새 버전으로 등록</button>
+</form>
+<form method="post" action="/images/{{ profile_id }}/finish-session">
+  <input type="hidden" name="_csrf" value="{{ xsrf_token }}">
+  <input type="hidden" name="action" value="cancel">
+  <button type="submit">취소</button>
+</form>
+{% elif orphaned_lock %}
+<p>이 프로파일은 편집 중으로 잠겨 있지만, 지금 서버에는 그 세션이 없습니다(이전 프로세스가 비정상 종료됐을 가능성) — 새로 편집을 시작하기 전에 락을 강제로 풀어야 합니다.</p>
+<form method="post" action="/images/{{ profile_id }}/force-unlock">
+  <input type="hidden" name="_csrf" value="{{ xsrf_token }}">
+  <button type="submit">잠금 강제 해제</button>
+</form>
+{% else %}
+<form method="post" action="/images/{{ profile_id }}/update-session">
+  <input type="hidden" name="_csrf" value="{{ xsrf_token }}">
+  <input type="number" name="base_version" placeholder="베이스로 삼을 버전" value="{{ versions[0].version_number if versions else 1 }}">
+  <input type="number" name="additional_gb" placeholder="추가 용량(GB, 선택)" min="0" value="0">
+  <button type="submit">이미지 업데이트 시작</button>
+</form>
+{% endif %}
+{% endblock %}

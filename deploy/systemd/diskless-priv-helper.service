@@ -1,0 +1,13 @@
+[Unit]
+Description=Diskless privileged helper (loop/dm-snapshot only)
+
+[Service]
+User=diskless-priv
+AmbientCapabilities=CAP_SYS_ADMIN
+CapabilityBoundingSet=CAP_SYS_ADMIN
+NoNewPrivileges=true
+ExecStart=/opt/diskless/.venv/bin/diskless-priv-helper
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

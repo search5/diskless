@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>클라이언트-버전 배정</h1>
+<form method="post" action="/clients/assign">
+  <input type="hidden" name="_csrf" value="{{ xsrf_token }}">
+  <table>
+  <thead><tr><th></th><th>MAC</th><th>Initiator IQN</th><th>배정 버전</th></tr></thead>
+  <tbody>
+  {% for b in bindings %}
+    <tr>
+      <td><input type="checkbox" name="client_id" value="{{ b.id }}"></td>
+      <td>{{ b.client_mac }}</td>
+      <td>{{ b.initiator_iqn }}</td>
+      <td>{{ b.assigned_version }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+  </table>
+  <input type="number" name="version_number" placeholder="새 버전 번호">
+  <button type="submit">선택 항목에 배정</button>
+</form>
+
+<h2>신규 클라이언트 등록</h2>
+<form method="post" action="/clients">
+  <input type="hidden" name="_csrf" value="{{ xsrf_token }}">
+  <input type="text" name="client_mac" placeholder="MAC 주소(예: aa:bb:cc:dd:ee:ff)" required>
+  <select name="image_profile_id">
+    {% for p in profiles %}
+      <option value="{{ p.id }}">{{ p.name }}</option>
+    {% endfor %}
+  </select>
+  <input type="number" name="assigned_version" placeholder="배정할 버전" required>
+  <button type="submit">등록</button>
+</form>
+{% endblock %}

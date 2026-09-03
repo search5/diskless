@@ -1,0 +1,13 @@
+[Unit]
+Description=Diskless bootd — Standalone DHCP 소켓 (모드 A, 특권 포트 67)
+# 기존 DHCP 서버가 있는 사이트(모드 B: Proxy)는 이 유닛을 아예 enable하지 않는다 —
+# diskless-bootd.service의 Sockets= 목록에서도 이 소켓을 뺀다.
+
+[Socket]
+ListenDatagram=67
+Accept=no
+FileDescriptorName=dhcp
+Broadcast=yes
+
+[Install]
+WantedBy=sockets.target

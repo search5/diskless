@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>대시보드</h1>
+<table id="sessions"><thead><tr><th>Initiator IQN</th><th>클라이언트 MAC</th><th>버전</th><th>읽기전용</th><th>시작 시각</th></tr></thead><tbody></tbody></table>
+<script>
+  // WebSocket으로 SessionMonitorWebSocket 브로드캐스트 수신 (DESIGN.md 3.5 화면 1번)
+  const ws = new WebSocket(`ws://${location.host}/ws/sessions`);
+  ws.onmessage = (ev) => {
+    const { sessions } = JSON.parse(ev.data);
+    const tbody = document.querySelector("#sessions tbody");
+    tbody.innerHTML = "";
+    for (const s of sessions) {
+      // MAC/IQN 등은 DB에 저장된 값이라 innerHTML 대신 textContent로 삽입해 XSS 경로를 막는다.
+      const tr = document.createElement("tr");
+      for (const value of [s.initiator_iqn, s.client_mac, s.version, s.readonly ? "예" : "아니오", s.started_at]) {
+        const td = document.createElement("td");
+        td.textContent = value;
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+  };
+</script>
+{% endblock %}

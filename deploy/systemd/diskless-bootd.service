@@ -1,0 +1,23 @@
+[Unit]
+Description=Diskless bootd — DHCP(Standalone/Proxy)+TFTP+iSCSI 오케스트레이션+관리 웹 UI (Twisted, 일반 유저)
+# Standalone 모드(3.1 모드 A) 사이트: 아래 그대로 사용.
+# Proxy 모드(3.1 모드 B) 사이트: Sockets= 에서 diskless-bootd-dhcp.socket 제거하고,
+#   diskless-bootd-dhcp.socket 유닛 자체를 enable하지 않는다. Proxy DHCP(4011)는
+#   특권 포트가 아니라 소켓 활성화 없이 이 프로세스가 직접 bind한다.
+# 웹 UI(8080)/WebSocket(8081)도 특권 포트가 아니므로 이 프로세스가 직접 bind한다.
+Sockets=diskless-bootd-tftp.socket diskless-bootd-dhcp.socket
+After=diskless-priv-helper.service
+
+[Service]
+ExecStart=/opt/diskless/.venv/bin/diskless-bootd
+User=diskless
+Group=diskless-priv
+Environment=DISKLESS_DB=/var/lib/diskless/diskless.db
+Environment=DISKLESS_PRIV_SOCK=/run/diskless/priv-helper.sock
+Environment=DISKLESS_DHCP_MODE=standalone
+# DISKLESS_COOKIE_SECRET 등 비밀값은 별도 파일로 분리 (0600, diskless 유저 소유)
+EnvironmentFile=/etc/diskless/secrets.env
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

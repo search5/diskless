@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>로그인</h1>
+{% if error %}<p>{{ error }}</p>{% endif %}
+<form method="post">
+  <input type="hidden" name="_csrf" value="{{ xsrf_token }}">
+  <input type="text" name="username" placeholder="아이디">
+  <input type="password" name="password" placeholder="비밀번호">
+  <button type="submit">로그인</button>
+</form>
+{% endblock %}
